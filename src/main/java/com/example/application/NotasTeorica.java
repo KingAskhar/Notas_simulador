@@ -21,7 +21,7 @@ public class NotasTeorica extends Notas implements Aritmetica {
 
     @Override
     public String nombre() {
-        return "Materia JS";
+        return "Materia teorica";
     }
 
     @Override

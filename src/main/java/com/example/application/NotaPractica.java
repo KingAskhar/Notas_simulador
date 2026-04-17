@@ -17,7 +17,7 @@ public class NotaPractica extends Notas implements Aritmetica {
     }
     @Override
     public String nombre() {
-        return "Materia JAVA";
+        return "Materia practica";
     }
     @Override
     public String asignatura() {

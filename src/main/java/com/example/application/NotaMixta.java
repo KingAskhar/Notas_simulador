@@ -18,7 +18,7 @@ public class NotaMixta extends Notas implements Aritmetica{
     }
     @Override
     public String nombre() {
-        return "Materia SQL";
+        return "Materia mixta";
     }
     @Override
     public String asignatura() {
