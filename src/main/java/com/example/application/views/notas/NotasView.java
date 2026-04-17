@@ -1,13 +1,19 @@
 package com.example.application.views.notas;
 
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
+import com.example.application.NotaMixta;
+import com.example.application.NotaPractica;
+import com.example.application.NotasPredefinidas;
+import com.example.application.NotasTeorica;
+
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 @PageTitle("Notas")
@@ -16,21 +22,47 @@ import org.vaadin.lineawesome.LineAwesomeIconUrl;
 public class NotasView extends VerticalLayout {
 
     public NotasView() {
-        setSpacing(false);
 
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-        add(img);
+        H2 titulo = new H2("Simulador de Notas");
 
-        H2 header = new H2("This place intentionally left empty");
-        header.addClassNames(Margin.Top.XLARGE, Margin.Bottom.MEDIUM);
-        add(header);
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
+        ComboBox<Aritmetica> combo = new ComboBox<>("Tipo de materia");
+        combo.setItems(NotasPredefinidas.obtener());
+        combo.setItemLabelGenerator(Aritmetica::etiqueta);
 
-        setSizeFull();
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
+        NumberField parcialField = new NumberField("Nota parcial");
+        NumberField tallerField = new NumberField("Nota taller");
+        NumberField proyectoField = new NumberField("Nota proyecto");
+
+        Button calcular = new Button("Calcular");
+        Span resultado = new Span();
+
+        calcular.addClickListener(e -> {
+            if (combo.getValue() == null) {
+                resultado.setText("Por favor selecciona un tipo de materia.");
+                return;
+            }
+            if (parcialField.getValue() == null || tallerField.getValue() == null || proyectoField.getValue() == null) {
+                resultado.setText("Por favor ingresa todas las notas.");
+                return;
+            }
+            Aritmetica seleccion = combo.getValue();
+            double parcial = parcialField.getValue();
+            double taller = tallerField.getValue();
+            double proyecto = proyectoField.getValue();
+            Aritmetica calculo;
+
+            if (seleccion instanceof NotasTeorica) {
+                calculo = new NotasTeorica(parcial, taller, proyecto);
+            } else if (seleccion instanceof NotaPractica) {
+                calculo = new NotaPractica(parcial, taller, proyecto);
+            } else {
+                calculo = new NotaMixta(parcial, taller, proyecto);
+            }
+
+            double notaFinal = calculo.calcular(0);
+            resultado.setText("Nota final: " + String.format("%.2f", notaFinal));
+        });
+
+        add(titulo, combo, parcialField, tallerField, proyectoField, calcular, resultado);
     }
-
 }
